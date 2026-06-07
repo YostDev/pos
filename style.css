@@ -30,17 +30,16 @@ body {
     position: fixed; bottom: 0px; padding: 30px;
     background-color: var(--blanco); left: 0;
     border-radius: 15px 15px 0;
-    color: var(--pri);  height: 140px;
+    color: var(--pri); height: 120px;
 }
 .bottom-menu button {
-    padding: 10px; width: 80px; height: 80px;
+    padding: 10px; width: 60px; height: 60px;
     background: none; border: none;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 .seleccion {
     background-color: var(--sec) !important;
     border-radius: 50%; color: var(--blanco);
-    font-size: 3rem; width: 100px; height: 100px;
     margin-top: -50px;
 }
 .ventana{
@@ -107,4 +106,13 @@ body {
     padding: 15px; margin: 25px auto;
     width: 100%; border: none;
     border-radius: 10px;
+}
+.descuento {
+    width: 100%; display: flex; justify-content: space-between;
+    align-items: center; color: var(--pri);
+    margin-top: -35px;
+}
+.descuento input {
+    background-color: var(--blanco);
+    width: 30%; padding: 15px; border: none;
 }

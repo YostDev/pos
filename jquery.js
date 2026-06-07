@@ -24,78 +24,91 @@
             });
         }
 
-        
+        function actualizarPantallaTotales(subtotal) {
+    
+    if (subtotal === undefined) {
+        subtotal = listaTicket.reduce((suma, item) => suma + (item.precio * item.cantidad), 0);
+    }
+
+    let descuento = parseFloat($('#input-descuento').val()) || 0;
+
+
+    let totalFinal = subtotal * (1 - descuento / 100);
+
+    if (totalFinal < 0) { totalFinal = 0; }
+
+    $('#total-precio').text(totalFinal.toFixed(2));
+}
+
+
+$('#input-descuento').on('input', function() {
+    actualizarPantallaTotales();
+});
+
         function cargarTicket() {
-            let $ticket = $('.ticket');
-            $ticket.empty(); 
+    let $ticket = $('.ticket');
+    $ticket.empty(); 
 
-            let total = 0;
+    let subtotal = 0;
 
-            if (listaTicket.length === 0) {
-                $ticket.html('<p>El ticket está vacío.</p>');
-                $('#total-precio').text('0.00');
-                return;
-            }
+    if (listaTicket.length === 0) {
+        $ticket.html('<p>El ticket está vacío.</p>');
+        actualizarPantallaTotales(0);
+        return;
+    }
 
-            
-            listaTicket.forEach(function(item) {
-                total += item.precio;
+    listaTicket.forEach(function(item) {
+        let precioTotalItem = item.precio * item.cantidad;
+        subtotal += precioTotalItem;
 
-                let estructuraTicket = `
-                    <div class="item-ticket">
-                        <span>${item.nombre}</span>
-                        <span>$${item.precio.toFixed(2)}</span>
-                    </div>
-                `;
-                $ticket.append(estructuraTicket);
-            });
-            $(".cantidad").text("Cantidad: " + listaTicket.length)
-            $('#total-precio').text("$" + total.toFixed(2));
-        }
-
+        let estructuraTicket = `
+            <div class="item-ticket">
+                <span><strong>x${item.cantidad}</strong> ${item.nombre}</span>
+                <span>$${precioTotalItem.toFixed(2)}</span>
+            </div>
+        `;
+        $ticket.append(estructuraTicket);
+    });
+     $(".cantidad").text("Cantidad: " + listaTicket.length)
+    actualizarPantallaTotales(subtotal);
+}
         
         $('#btn-limpiar-ticket').on('click', function() {
    
             listaTicket = [];
 
-    
+            $('#input-descuento').val(0);
             localStorage.setItem('lista_ticket', JSON.stringify(listaTicket));
             cargarTicket();
         });
         
         $('.inventario').on('click', '.btn-añadir', function() {
     let idProducto = $(this).data('id');
-    
-    // Guardamos la referencia al botón que fue clickeado
     let $boton = $(this);
 
     let productoSeleccionado = stockProductos.find(p => p.id === idProducto);
 
     if (productoSeleccionado) {
-        listaTicket.push(productoSeleccionado);
+        let productoEnTicket = listaTicket.find(item => item.id === idProducto);
+
+        if (productoEnTicket) {
+            productoEnTicket.cantidad += 1;
+        } else {
+            let nuevoItem = { ...productoSeleccionado, cantidad: 1 };
+            listaTicket.push(nuevoItem);
+        }
+
         localStorage.setItem('lista_ticket', JSON.stringify(listaTicket));
         cargarTicket();
 
-        
-        
-        let textoOriginal = $boton.html(); 
-        
 
+        let textoOriginal = $boton.html(); 
         $boton.html('<i class="fa-solid fa-check"></i>');
-        $boton.css({
-            'background-color': '#3a6c67', 
-            'color': 'white',
-            'pointer-events': 'none'       
-        });
-        
+        $boton.css({ 'background-color': '#376d68', 'color': 'white', 'pointer-events': 'none' });
         setTimeout(function() {
             $boton.html(textoOriginal);
-            $boton.css({
-                'background-color': '', 
-                'color': '',
-                'pointer-events': 'auto' 
-            });
-        }, 500);
+            $boton.css({ 'background-color': '', 'color': '', 'pointer-events': 'auto' });
+        }, 1000);
     }
 });
 
